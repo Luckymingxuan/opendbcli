@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { connect, disconnect } from './commands/connect.js';
+import { connect, disconnect, showConnections } from './commands/connect.js';
 
 const program = new Command();
 
@@ -14,6 +14,13 @@ program
   .argument('<url>', 'PostgreSQL connection URL (e.g., postgresql://user:pass@host:5432/dbname)')
   .action(async (url: string) => {
     await connect(url);
+  });
+
+program
+  .command('show')
+  .description('Show all saved connections')
+  .action(async () => {
+    await showConnections();
   });
 
 program
