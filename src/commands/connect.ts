@@ -10,6 +10,8 @@ interface ConnectionInfo {
   database: string;
   host: string;
   port: number;
+  username: string;
+  password: string;
   lastConnected: string;
   enabled: boolean;
 }
@@ -112,12 +114,16 @@ export async function connect(nameUrl: string): Promise<void> {
   let host: string;
   let port: number;
   let existing: ConnectionInfo | null = null;
+  let urlUsername = '';
+  let urlPassword = '';
 
   if (isUrl(nameUrl)) {
     const url = new URL(nameUrl);
     database = url.pathname.slice(1) || 'postgres';
     host = url.hostname;
     port = parseInt(url.port) || 5432;
+    urlUsername = url.username;
+    urlPassword = url.password;
     existing = connections.get(database) || null;
   } else {
     database = nameUrl;
@@ -131,16 +137,18 @@ export async function connect(nameUrl: string): Promise<void> {
     port = existing.port;
   }
 
-  const credentials = await promptCredentials();
+  let credentials: { username: string; password: string };
+  if (urlUsername || urlPassword) {
+    credentials = { username: urlUsername, password: urlPassword };
+  } else {
+    credentials = await promptCredentials();
+  }
 
   let finalUrl: string;
   if (existing) {
     finalUrl = buildUrl(existing, credentials.username, credentials.password);
   } else {
-    const url = new URL(nameUrl);
-    url.username = credentials.username;
-    url.password = credentials.password;
-    finalUrl = url.toString();
+    finalUrl = `postgresql://${credentials.username}:${credentials.password}@${host}:${port}/${database}`;
   }
 
   const driver = new PostgresDriver();
@@ -150,10 +158,12 @@ export async function connect(nameUrl: string): Promise<void> {
     await driver.connect(finalUrl);
 
     const connectionInfo: ConnectionInfo = {
-      url: finalUrl,
+      url: `postgresql://${host}:${port}/${database}`,
       database,
       host,
       port,
+      username: credentials.username,
+      password: credentials.password,
       lastConnected: new Date().toISOString(),
       enabled: true,
     };
@@ -190,7 +200,9 @@ export async function disconnect(name: string): Promise<void> {
 
   const conn = connections.get(name)!;
   conn.enabled = false;
+  conn.username = '';
+  conn.password = '';
   await saveConnections();
 
-  console.log(chalk.yellow(`Disconnected from "${name}". Connection info preserved.`));
+  console.log(chalk.yellow(`Disconnected from "${name}". Username and password cleared.`));
 }
