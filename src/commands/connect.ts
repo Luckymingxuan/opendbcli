@@ -8,14 +8,15 @@ import os from 'os';
 interface ConnectionInfo {
   url: string;
   database: string;
+  host: string;
+  port: number;
   lastConnected: string;
+  enabled: boolean;
 }
 
 const CONFIG_DIR = path.join(os.homedir(), '.dbcli');
 const CONFIG_FILE = path.join(CONFIG_DIR, 'connections.json');
 
-let currentDriver: PostgresDriver | null = null;
-let currentDatabase: string | null = null;
 let connections: Map<string, ConnectionInfo> = new Map();
 
 async function loadConnections(): Promise<void> {
@@ -35,16 +36,13 @@ async function saveConnections(): Promise<void> {
   await fs.writeFile(CONFIG_FILE, JSON.stringify(obj, null, 2), 'utf-8');
 }
 
-export function getDriver(): PostgresDriver | null {
-  return currentDriver;
-}
-
-export function getCurrentDatabase(): string | null {
-  return currentDatabase;
-}
-
-export function listConnections(): Map<string, ConnectionInfo> {
+export function getConnections(): Map<string, ConnectionInfo> {
   return connections;
+}
+
+export async function getConnection(name: string): Promise<ConnectionInfo | null> {
+  await loadConnections();
+  return connections.get(name) || null;
 }
 
 async function promptCredentials(): Promise<{ username: string; password: string }> {
@@ -65,12 +63,20 @@ async function promptCredentials(): Promise<{ username: string; password: string
   return answers;
 }
 
+function isUrl(str: string): boolean {
+  return str.includes('://');
+}
+
+function buildUrl(info: ConnectionInfo, username: string, password: string): string {
+  return `postgresql://${username}:${password}@${info.host}:${info.port}/${info.database}`;
+}
+
 export async function showConnections(): Promise<void> {
   await loadConnections();
 
   if (connections.size === 0) {
     console.log(chalk.yellow('No saved connections.'));
-    console.log(chalk.cyan('Use "dbcli connect <url>" to save a connection.'));
+    console.log(chalk.cyan('Use "dbcli connect <url>" to add a new connection.'));
     return;
   }
 
@@ -78,74 +84,113 @@ export async function showConnections(): Promise<void> {
   const rows = Array.from(connections.entries()).map(([name, info]) => ({
     name,
     database: info.database,
+    host: info.host,
+    port: info.port,
+    status: info.enabled ? 'enabled' : 'disabled',
     lastConnected: info.lastConnected,
-    current: name === currentDatabase ? '*' : '',
   }));
   console.table(rows);
 }
 
-export async function connect(urlStr: string): Promise<void> {
+export async function deleteConnection(name: string): Promise<void> {
   await loadConnections();
 
-  if (currentDriver?.isConnected()) {
-    await currentDriver.disconnect();
-  }
-
-  let url: URL;
-  try {
-    url = new URL(urlStr);
-  } catch {
-    console.error(chalk.red('Invalid URL format'));
+  if (!connections.has(name)) {
+    console.error(chalk.red(`Connection "${name}" not found.`));
     process.exit(1);
   }
 
-  if (!url.username || !url.password) {
-    console.log(chalk.cyan('Please enter your credentials:'));
-    const credentials = await promptCredentials();
-    url.username = credentials.username;
-    url.password = credentials.password;
+  connections.delete(name);
+  await saveConnections();
+  console.log(chalk.yellow(`Connection "${name}" deleted.`));
+}
+
+export async function connect(nameUrl: string): Promise<void> {
+  await loadConnections();
+
+  let database: string;
+  let host: string;
+  let port: number;
+  let existing: ConnectionInfo | null = null;
+
+  if (isUrl(nameUrl)) {
+    const url = new URL(nameUrl);
+    database = url.pathname.slice(1) || 'postgres';
+    host = url.hostname;
+    port = parseInt(url.port) || 5432;
+    existing = connections.get(database) || null;
+  } else {
+    database = nameUrl;
+    existing = connections.get(database) || null;
+    if (!existing) {
+      console.error(chalk.red(`Connection "${database}" not found.`));
+      console.log(chalk.cyan('Use "dbcli connect <url>" to add a new connection.'));
+      process.exit(1);
+    }
+    host = existing.host;
+    port = existing.port;
   }
 
-  const database = url.pathname.slice(1) || 'postgres';
+  const credentials = await promptCredentials();
 
-  currentDriver = new PostgresDriver();
+  let finalUrl: string;
+  if (existing) {
+    finalUrl = buildUrl(existing, credentials.username, credentials.password);
+  } else {
+    const url = new URL(nameUrl);
+    url.username = credentials.username;
+    url.password = credentials.password;
+    finalUrl = url.toString();
+  }
+
+  const driver = new PostgresDriver();
 
   try {
     console.log(chalk.cyan(`Connecting to "${database}"...`));
-    await currentDriver.connect(url.toString());
-    currentDatabase = database;
+    await driver.connect(finalUrl);
 
-    connections.set(database, {
-      url: url.toString(),
+    const connectionInfo: ConnectionInfo = {
+      url: finalUrl,
       database,
+      host,
+      port,
       lastConnected: new Date().toISOString(),
-    });
+      enabled: true,
+    };
+
+    connections.set(database, connectionInfo);
     await saveConnections();
 
     console.log(chalk.green(`Connected to "${database}" successfully!`));
     console.log(chalk.gray('Press any key to exit...'));
+
     await new Promise<void>((resolve) => {
       process.stdin.setRawMode?.(true);
       process.stdin.resume?.();
       process.stdin.once('data', () => {
         process.stdin.setRawMode?.(false);
+        driver.disconnect();
         process.exit(0);
       });
     });
   } catch (error) {
-    currentDriver = null;
-    currentDatabase = null;
     const message = error instanceof Error ? error.message : String(error);
     console.error(chalk.red(`Connection failed: ${message}`));
     process.exit(1);
   }
 }
 
-export async function disconnect(): Promise<void> {
-  if (currentDriver) {
-    await currentDriver.disconnect();
-    currentDriver = null;
-    currentDatabase = null;
-    console.log(chalk.yellow('Disconnected.'));
+export async function disconnect(name: string): Promise<void> {
+  await loadConnections();
+
+  if (!connections.has(name)) {
+    console.error(chalk.red(`Connection "${name}" not found.`));
+    process.exit(1);
   }
+
+  const conn = connections.get(name)!;
+  conn.enabled = false;
+  await saveConnections();
+
+  console.log(chalk.yellow(`Disconnected from "${name}". Connection info preserved.`));
 }

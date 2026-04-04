@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { connect, disconnect, showConnections } from './commands/connect.js';
+import { connect, disconnect, showConnections, deleteConnection } from './commands/connect.js';
 
 const program = new Command();
 
@@ -11,9 +11,9 @@ program
 program
   .command('connect')
   .description('Connect to a database')
-  .argument('<url>', 'PostgreSQL connection URL (e.g., postgresql://user:pass@host:5432/dbname)')
-  .action(async (url: string) => {
-    await connect(url);
+  .argument('<name|url>', 'Connection name (for existing) or full URL (for new connection)')
+  .action(async (nameUrl: string) => {
+    await connect(nameUrl);
   });
 
 program
@@ -25,9 +25,18 @@ program
 
 program
   .command('disconnect')
-  .description('Disconnect from current database')
-  .action(async () => {
-    await disconnect();
+  .description('Disconnect a connection (keeps URL, only disables)')
+  .argument('<name>', 'Connection name to disconnect')
+  .action(async (name: string) => {
+    await disconnect(name);
+  });
+
+program
+  .command('delete')
+  .description('Delete a saved connection completely')
+  .argument('<name>', 'Connection name to delete')
+  .action(async (name: string) => {
+    await deleteConnection(name);
   });
 
 program.parse();
