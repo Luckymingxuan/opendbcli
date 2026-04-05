@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { connect, disconnect, showConnections, deleteConnection } from './commands/connect.js';
+import { connect, disconnect, showConnections as statusConnections, deleteConnection } from './commands/connect.js';
 
 const program = new Command();
 
@@ -17,10 +17,10 @@ program
   });
 
 program
-  .command('show')
-  .description('Show all saved connections')
+  .command('status')
+  .description('Show all saved connections status')
   .action(async () => {
-    await showConnections();
+    await statusConnections();
   });
 
 program
