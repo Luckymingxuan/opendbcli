@@ -204,17 +204,7 @@ export async function connect(nameUrl: string): Promise<void> {
     await saveConnections();
 
     console.log(chalk.green(`Connected to db("${database}") as user("${credentials.username}") successfully!`));
-    console.log(chalk.gray('Press any key to exit...'));
-
-    await new Promise<void>((resolve) => {
-      process.stdin.setRawMode?.(true);
-      process.stdin.resume?.();
-      process.stdin.once('data', () => {
-        process.stdin.setRawMode?.(false);
-        driver.disconnect();
-        process.exit(0);
-      });
-    });
+    process.exit(0);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(chalk.red(`Connection failed: ${message}`));
