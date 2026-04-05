@@ -148,23 +148,7 @@ export async function connect(nameUrl: string): Promise<void> {
   }
 
   let credentials: { username: string; password: string };
-
-  if (existing && existing.username && existing.password && !urlUsername && !urlPassword) {
-    const useExisting = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'value',
-        message: `You have an existing account "${existing.username}". Enter "y" to use it or anything else to re-login:`,
-        default: 'y',
-      },
-    ]);
-
-    if (useExisting.value.toLowerCase() === 'y') {
-      credentials = { username: existing.username, password: existing.password };
-    } else {
-      credentials = await promptCredentials();
-    }
-  } else if (urlUsername || urlPassword) {
+  if (urlUsername || urlPassword) {
     credentials = { username: urlUsername, password: urlPassword };
   } else {
     credentials = await promptCredentials();
