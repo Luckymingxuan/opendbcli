@@ -92,6 +92,13 @@ export async function showConnections(): Promise<void> {
     return;
   }
 
+  const activeConnection = Array.from(connections.values()).find((conn) => conn.enabled);
+  if (activeConnection) {
+    console.log(chalk.green(`Current connected database: "${activeConnection.database}" (user: ${activeConnection.username})`));
+  } else {
+    console.log(chalk.yellow('No database is currently connected.'));
+  }
+
   console.log(chalk.cyan('Saved connections:'));
   const rows = Array.from(connections.entries()).map(([name, info]) => ({
     username: info.username || '-',
