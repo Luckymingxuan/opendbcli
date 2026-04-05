@@ -8,7 +8,8 @@ const program = new Command();
 program
   .name('dbcli')
   .description('Database CLI tool')
-  .version('0.1.0');
+  .version('0.1.0')
+  .addHelpCommand(false);
 
 program
   .command('connect')
