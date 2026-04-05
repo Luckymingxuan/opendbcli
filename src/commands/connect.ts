@@ -222,7 +222,7 @@ export async function connect(nameUrl: string): Promise<void> {
   }
 }
 
-export async function disconnect(name: string): Promise<void> {
+export async function logout(name: string): Promise<void> {
   await loadConnections();
 
   if (!connections.has(name)) {
