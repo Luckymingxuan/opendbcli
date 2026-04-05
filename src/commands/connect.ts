@@ -124,7 +124,7 @@ export async function deleteConnection(name: string): Promise<void> {
   console.log(chalk.yellow(`Connection "${name}" deleted.`));
 }
 
-export async function connect(nameUrl: string): Promise<void> {
+export async function connect(nameUrl: string, options?: { username?: string; password?: string; current?: boolean }): Promise<void> {
   await loadConnections();
 
   let database: string;
@@ -156,7 +156,18 @@ export async function connect(nameUrl: string): Promise<void> {
 
   let credentials: { username: string; password: string };
 
-  if (existing && existing.username && existing.password) {
+  if (options?.current) {
+    const activeConn = Array.from(connections.values()).find((conn) => conn.enabled);
+    if (!activeConn) {
+      console.error(chalk.red('No currently connected database found.'));
+      process.exit(1);
+    }
+    credentials = { username: activeConn.username, password: activeConn.password };
+  } else if (options?.username && options?.password) {
+    credentials = { username: options.username, password: options.password };
+  } else if (urlUsername || urlPassword) {
+    credentials = { username: urlUsername, password: urlPassword };
+  } else if (existing && existing.username && existing.password) {
     const useExisting = await inquirer.prompt([
       {
         type: 'input',
@@ -168,13 +179,9 @@ export async function connect(nameUrl: string): Promise<void> {
 
     if (useExisting.value.toLowerCase() === 'y') {
       credentials = { username: existing.username, password: existing.password };
-    } else if (urlUsername || urlPassword) {
-      credentials = { username: urlUsername, password: urlPassword };
     } else {
       credentials = await promptCredentials();
     }
-  } else if (urlUsername || urlPassword) {
-    credentials = { username: urlUsername, password: urlPassword };
   } else {
     credentials = await promptCredentials();
   }
