@@ -13,10 +13,13 @@ program
 
 program
   .command('connect')
-  .description('Connect to a database')
+  .description('Connect to a database (-u <user> -p <pass> for credentials, -c to use current)')
   .argument('<db-name|url>', 'Connection name (for existing) or full URL (for new connection)')
-  .action(async (nameUrl: string) => {
-    await connect(nameUrl);
+  .option('-u, --username <username>', 'Username for authentication')
+  .option('-p, --password <password>', 'Password for authentication')
+  .option('-c, --current', 'Use credentials from currently connected database')
+  .action(async (nameUrl: string, options) => {
+    await connect(nameUrl, options);
   });
 
 program
