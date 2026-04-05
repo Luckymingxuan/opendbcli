@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 import { connect, disconnect, showConnections as statusConnections, deleteConnection } from './commands/connect.js';
+import { listTables, describeTable } from './commands/tables.js';
 
 const program = new Command();
 
@@ -37,6 +38,21 @@ program
   .argument('<name>', 'Connection name to delete')
   .action(async (name: string) => {
     await deleteConnection(name);
+  });
+
+program
+  .command('tables')
+  .description('List all tables in the connected database')
+  .action(async () => {
+    await listTables();
+  });
+
+program
+  .command('describe')
+  .description('Show the structure of a table')
+  .argument('<table>', 'Table name to describe')
+  .action(async (table: string) => {
+    await describeTable(table);
   });
 
 program.parse();
