@@ -1,3 +1,13 @@
+/*
+ * @Author: Mingxuan songmingxuan936@gmail.com
+ * @Date: 2026-04-05 17:01:59
+ * @LastEditors: Mingxuan songmingxuan936@gmail.com
+ * @LastEditTime: 2026-04-05 17:42:59
+ * @FilePath: /dbcli/src/drivers/postgres.ts
+ * @Description: 
+ * 
+ * Copyright (c) 2026 by ${git_name_email}, All Rights Reserved. 
+ */
 import pg from 'pg';
 import type { DatabaseDriver, QueryResult, TableInfo, ColumnInfo } from './interface.js';
 
@@ -67,13 +77,20 @@ export class PostgresDriver implements DatabaseDriver {
   async describeTable(schema: string, table: string): Promise<ColumnInfo[]> {
     const result = await this.query(`
       SELECT
-        c.column_name as name,
-        c.data_type as data_type,
-        c.is_nullable as is_nullable,
-        c.column_default as default_value
-      FROM information_schema.columns c
-      WHERE c.table_schema = $1 AND c.table_name = $2
-      ORDER BY c.ordinal_position
+        a.attname as name,
+        format_type(a.atttypid, a.atttypmod) as data_type,
+        CASE WHEN a.attnotnull THEN 'NO' ELSE 'YES' END as is_nullable,
+        pg_get_expr(ad.adbin, a.attrelid) as default_value,
+        col_description(a.attrelid, a.attnum) as description
+      FROM pg_attribute a
+      JOIN pg_class c ON c.oid = a.attrelid
+      JOIN pg_namespace n ON n.oid = c.relnamespace
+      LEFT JOIN pg_attrdef ad ON ad.adrelid = a.attrelid AND ad.adnum = a.attnum
+      WHERE n.nspname = $1
+        AND c.relname = $2
+        AND a.attnum > 0
+        AND NOT a.attisdropped
+      ORDER BY a.attnum
     `, [schema, table]);
     return result.rows as unknown as ColumnInfo[];
   }

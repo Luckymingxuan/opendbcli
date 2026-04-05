@@ -60,6 +60,16 @@ export async function describeTable(tableName: string): Promise<void> {
     } else {
       console.log(chalk.cyan(`Structure of table "${tableName}" in database "${connName}":`));
       console.table(columns);
+
+      const hasDescriptions = columns.some(col => col.description);
+      if (hasDescriptions) {
+        console.log(chalk.gray('\nColumn descriptions:'));
+        columns.forEach(col => {
+          if (col.description) {
+            console.log(`  ${chalk.white(col.name)}: ${chalk.gray(col.description)}`);
+          }
+        });
+      }
     }
   } finally {
     await driver.disconnect();

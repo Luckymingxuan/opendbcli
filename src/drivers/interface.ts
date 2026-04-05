@@ -29,6 +29,7 @@ export interface ColumnInfo {
   dataType: string;
   isNullable: boolean;
   defaultValue: string | null;
+  description: string | null;
 }
 
 export interface DatabaseDriver {
