@@ -1,65 +1,72 @@
-<!--
- * @Author: Mingxuan songmingxuan936@gmail.com
- * @Date: 2026-04-05 17:01:59
- * @LastEditors: Mingxuan songmingxuan936@gmail.com
- * @LastEditTime: 2026-04-05 22:24:41
- * @FilePath: /dbcli/README.md
- * @Description: 
- * 
- * Copyright (c) 2026 by ${git_name_email}, All Rights Reserved. 
--->
 # dbcli
 
-A personal database CLI tool for PostgreSQL with AI-friendly design.
+A database CLI built for AI agents — not just humans.
 
-## Install
+You just provide your database connection, and the AI decides how to store, structure, and query data autonomously.
+
+## Why dbcli?
+
+Tools like `psql` are built for humans managing databases.\
+dbcli is built for AI that needs to **own its data layer**.
+
+- AI decides how to structure data
+- AI decides what to store
+- AI decides how to query
+
+No abstractions. Just direct database control.\
+dbcli gives AI **full ownership of its data layer**, not just read/write access.
+
+## Database Support
+
+Currently supports **PostgreSQL only**.
+
+This is a deliberate choice: focus on one solid foundation for AI-driven data systems.
+
+## Quick Start
+
+### Install
 
 ```bash
 npm install -g @luckymingxuan/dbcli
 ```
 
-## Commands
+---
 
-### Connection Management
+### Commands
 
-```bash
-# Connect to database
-dbcli connect <db-name|url>                    # Connect using stored credentials
-dbcli connect <url> -u <user> -p <pass>        # Connect with inline credentials
-dbcli connect <db-name> -c                     # Use credentials from current connection
+Humans don't need to see what is shown to AI.
 
-# Show all saved connections
-dbcli -s
-dbcli --status
+<img width="611" height="327" alt="Image" src="https://github.com/user-attachments/assets/0f9c3740-07c9-4165-ba11-3ebf547544f1" />
 
-# Disconnect (keeps credentials)
-dbcli disconnect <db-name>
-
-# Logout (clears credentials only)
-dbcli logout <db-name>
-
-# Delete connection completely
-dbcli delete <db-name>
-```
-
-### Database Operations
 
 ```bash
-# List all tables
+dbcli connect my-db
 dbcli tables
-
-# Show table structure
-dbcli describe <table>
-
-# Execute SQL query
-dbcli query "<sql>"
+dbcli describe users
+dbcli query "SELECT * FROM users...."
 ```
+
+### Example AI-driven Workflow
+
+```bash
+dbcli query "CREATE TABLE notes (id SERIAL PRIMARY KEY, content TEXT)"
+dbcli query "INSERT INTO notes (content) VALUES ('hello world')"
+dbcli query "SELECT * FROM notes"
+```
+
+---
 
 ## Configuration
 
-Connections are stored in `~/.dbcli/connections.json` with the following structure:
+The connections are stored in:
 
-```json
+```bash
+~/.dbcli/connections.json
+```
+
+Example configuration:
+
+```bash
 {
   "connections": {
     "my-db": {
