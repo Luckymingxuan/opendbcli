@@ -94,7 +94,7 @@ export async function showConnections(): Promise<void> {
 
   console.log(chalk.cyan('Saved connections:'));
   const rows = Array.from(connections.entries()).map(([name, info]) => ({
-    name,
+    username: info.username || '-',
     database: info.database,
     host: info.host,
     port: info.port,
