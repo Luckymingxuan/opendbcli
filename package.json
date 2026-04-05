@@ -1,5 +1,5 @@
 {
-  "name": "dbcli",
+  "name": "@luckymingxuan/dbcli",
   "version": "0.1.0",
   "description": "Database CLI tool",
   "type": "module",
