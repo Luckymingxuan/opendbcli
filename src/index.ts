@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 import { Command } from 'commander';
 import { connect, disconnect, logout, showConnections as statusConnections, deleteConnection } from './commands/connect.js';
 import { listTables, describeTable } from './commands/tables.js';
