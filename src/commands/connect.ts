@@ -149,7 +149,7 @@ export async function connect(nameUrl: string): Promise<void> {
 
   let credentials: { username: string; password: string };
 
-  if (existing && existing.username && existing.password && !urlUsername && !urlPassword) {
+  if (existing && existing.username && existing.password) {
     const useExisting = await inquirer.prompt([
       {
         type: 'input',
@@ -161,6 +161,8 @@ export async function connect(nameUrl: string): Promise<void> {
 
     if (useExisting.value.toLowerCase() === 'y') {
       credentials = { username: existing.username, password: existing.password };
+    } else if (urlUsername || urlPassword) {
+      credentials = { username: urlUsername, password: urlPassword };
     } else {
       credentials = await promptCredentials();
     }
@@ -180,7 +182,7 @@ export async function connect(nameUrl: string): Promise<void> {
   const driver = new PostgresDriver();
 
   try {
-    console.log(chalk.cyan(`Connecting to "${database}"...`));
+    console.log(chalk.cyan(`Connecting to db("${database}")...`));
     await driver.connect(finalUrl);
 
     for (const conn of connections.values()) {
@@ -201,7 +203,7 @@ export async function connect(nameUrl: string): Promise<void> {
     connections.set(database, connectionInfo);
     await saveConnections();
 
-    console.log(chalk.green(`Connected to "${database}" successfully!`));
+    console.log(chalk.green(`Connected to db("${database}") as user("${credentials.username}") successfully!`));
     console.log(chalk.gray('Press any key to exit...'));
 
     await new Promise<void>((resolve) => {
