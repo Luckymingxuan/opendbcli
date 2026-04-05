@@ -20,10 +20,16 @@ program
   });
 
 program
-  .command('status')
-  .description('Show all saved connections status')
-  .action(async () => {
-    await statusConnections();
+  .option('-s, --status', 'Show all saved connections status')
+  .action(async (options, cmd) => {
+    if (cmd.args && cmd.args.length > 0) {
+      console.error(`error: unknown command '${cmd.args[0]}'`);
+      process.exit(1);
+    }
+    if (options.status) {
+      await statusConnections();
+      process.exit(0);
+    }
   });
 
 program
