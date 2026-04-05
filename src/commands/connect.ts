@@ -219,6 +219,21 @@ export async function connect(nameUrl: string): Promise<void> {
   }
 }
 
+export async function disconnect(name: string): Promise<void> {
+  await loadConnections();
+
+  if (!connections.has(name)) {
+    console.error(chalk.red(`Connection "${name}" not found.`));
+    process.exit(1);
+  }
+
+  const conn = connections.get(name)!;
+  conn.enabled = false;
+  await saveConnections();
+
+  console.log(chalk.yellow(`Disconnected from "${name}".`));
+}
+
 export async function logout(name: string): Promise<void> {
   await loadConnections();
 
@@ -233,5 +248,5 @@ export async function logout(name: string): Promise<void> {
   conn.password = '';
   await saveConnections();
 
-  console.log(chalk.yellow(`Disconnected from "${name}". Username and password cleared.`));
+  console.log(chalk.yellow(`Logged out from "${name}". Username and password cleared.`));
 }

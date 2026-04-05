@@ -1,5 +1,5 @@
 import { Command } from 'commander';
-import { connect, logout, showConnections as statusConnections, deleteConnection } from './commands/connect.js';
+import { connect, disconnect, logout, showConnections as statusConnections, deleteConnection } from './commands/connect.js';
 import { listTables, describeTable } from './commands/tables.js';
 import { executeQuery } from './commands/query.js';
 
@@ -33,8 +33,16 @@ program
   });
 
 program
+  .command('disconnect')
+  .description('Disconnect from a database (keeps credentials)')
+  .argument('<db-name>', 'Connection name to disconnect')
+  .action(async (name: string) => {
+    await disconnect(name);
+  });
+
+program
   .command('logout')
-  .description('Logout from a connection (keeps URL, only clears credentials)')
+  .description('Logout from a connection (clears credentials)')
   .argument('<db-name>', 'Connection name to logout')
   .action(async (name: string) => {
     await logout(name);
