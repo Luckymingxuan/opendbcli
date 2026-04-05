@@ -42,7 +42,17 @@ export function getConnections(): Map<string, ConnectionInfo> {
   return connections;
 }
 
-export async function getConnection(name: string): Promise<ConnectionInfo | null> {
+export async function getActiveConnection(): Promise<ConnectionInfo | null> {
+  await loadConnections();
+  for (const conn of connections.values()) {
+    if (conn.enabled) {
+      return conn;
+    }
+  }
+  return null;
+}
+
+export async function getConnectionByName(name: string): Promise<ConnectionInfo | null> {
   await loadConnections();
   return connections.get(name) || null;
 }
@@ -156,6 +166,10 @@ export async function connect(nameUrl: string): Promise<void> {
   try {
     console.log(chalk.cyan(`Connecting to "${database}"...`));
     await driver.connect(finalUrl);
+
+    for (const conn of connections.values()) {
+      conn.enabled = false;
+    }
 
     const connectionInfo: ConnectionInfo = {
       url: `postgresql://${host}:${port}/${database}`,
