@@ -13,7 +13,7 @@ interface ConnectionInfo {
   username: string;
   password: string;
   lastConnected: string;
-  enabled: boolean;
+  connected: boolean;
 }
 
 const CONFIG_DIR = path.join(os.homedir(), '.dbcli');
@@ -45,7 +45,7 @@ export function getConnections(): Map<string, ConnectionInfo> {
 export async function getActiveConnection(): Promise<ConnectionInfo | null> {
   await loadConnections();
   for (const conn of connections.values()) {
-    if (conn.enabled) {
+    if (conn.connected) {
       return conn;
     }
   }
@@ -92,7 +92,7 @@ export async function showConnections(): Promise<void> {
     return;
   }
 
-  const activeConnection = Array.from(connections.values()).find((conn) => conn.enabled);
+  const activeConnection = Array.from(connections.values()).find((conn) => conn.connected);
   if (activeConnection) {
     console.log(chalk.green(`Current connected database: "${activeConnection.database}" (user: ${activeConnection.username})`));
   } else {
@@ -105,7 +105,7 @@ export async function showConnections(): Promise<void> {
     database: info.database,
     host: info.host,
     port: info.port,
-    status: info.enabled ? 'enabled' : 'disabled',
+    status: info.connected ? 'connected' : 'disconnected',
     lastConnected: info.lastConnected,
   }));
   console.table(rows);
@@ -157,7 +157,7 @@ export async function connect(nameUrl: string, options?: { username?: string; pa
   let credentials: { username: string; password: string };
 
   if (options?.current) {
-    const activeConn = Array.from(connections.values()).find((conn) => conn.enabled);
+    const activeConn = Array.from(connections.values()).find((conn) => conn.connected);
     if (!activeConn) {
       console.error(chalk.red('No currently connected database found.'));
       process.exit(1);
@@ -200,7 +200,7 @@ export async function connect(nameUrl: string, options?: { username?: string; pa
     await driver.connect(finalUrl);
 
     for (const conn of connections.values()) {
-      conn.enabled = false;
+      conn.connected = false;
     }
 
     const connectionInfo: ConnectionInfo = {
@@ -211,7 +211,7 @@ export async function connect(nameUrl: string, options?: { username?: string; pa
       username: credentials.username,
       password: credentials.password,
       lastConnected: new Date().toISOString(),
-      enabled: true,
+      connected: true,
     };
 
     connections.set(database, connectionInfo);
@@ -235,7 +235,7 @@ export async function disconnect(name: string): Promise<void> {
   }
 
   const conn = connections.get(name)!;
-  conn.enabled = false;
+  conn.connected = false;
   await saveConnections();
 
   console.log(chalk.yellow(`Disconnected from "${name}".`));
@@ -250,7 +250,7 @@ export async function logout(name: string): Promise<void> {
   }
 
   const conn = connections.get(name)!;
-  conn.enabled = false;
+  conn.connected = false;
   conn.username = '';
   conn.password = '';
   await saveConnections();
