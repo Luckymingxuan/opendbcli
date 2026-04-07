@@ -27,7 +27,7 @@ This is a deliberate choice: focus on one solid foundation for AI-driven data sy
 ### Install
 
 ```bash
-npm install -g opendbcli
+npm install -g @luckymingxuan/opendbcli
 ```
 
 ---
