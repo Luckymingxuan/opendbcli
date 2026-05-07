@@ -1,9 +1,14 @@
 import chalk from 'chalk';
 import { PostgresDriver } from '../drivers/postgres.js';
-import { getConnectionByName } from './connect.js';
+import { getConnectionByName, getCurrentConnectionName } from './connect.js';
 
-async function getDriverForConnection(connName: string): Promise<{ driver: PostgresDriver; connName: string } | null> {
-  const connection = await getConnectionByName(connName);
+async function getDriverForConnection(connName?: string): Promise<{ driver: PostgresDriver; connName: string } | null> {
+  const resolvedName = connName ?? await getCurrentConnectionName() ?? undefined;
+  if (!resolvedName) {
+    return null;
+  }
+
+  const connection = await getConnectionByName(resolvedName);
   if (!connection) {
     return null;
   }
@@ -15,10 +20,10 @@ async function getDriverForConnection(connName: string): Promise<{ driver: Postg
   const driver = new PostgresDriver();
   await driver.connect(url.toString());
 
-  return { driver, connName };
+  return { driver, connName: resolvedName };
 }
 
-export async function executeQuery(connName: string, sql: string): Promise<void> {
+export async function executeQuery(connName: string | undefined, sql: string): Promise<void> {
   const result = await getDriverForConnection(connName);
 
   if (!result) {

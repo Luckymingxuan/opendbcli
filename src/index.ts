@@ -15,10 +15,10 @@ program
 
 program
   .command('connect')
-  .description('Connect to a database using a full URL with embedded username and password')
-  .argument('<url>', 'Full database URL, for example postgresql://postgres:password@localhost:5432/mydb')
-  .action(async (url: string) => {
-    await connect(url);
+  .description('Connect by URL or switch to an existing connection by name')
+  .argument('<url-or-db-name>', 'Database URL or saved connection name')
+  .action(async (input: string) => {
+    await connect(input);
   });
 
 program
@@ -37,53 +37,48 @@ program
 program
   .command('disconnect')
   .description('Remove a saved database connection')
-  .argument('<db-name>', 'Connection name to disconnect')
-  .action(async (name: string) => {
+  .argument('[db-name]', 'Connection name to disconnect (defaults to current connection)')
+  .action(async (name?: string) => {
     await disconnect(name);
   });
 
 program
   .command('tables')
-  .description('List all tables in the specified database')
-  .argument('<db-name>', 'Connection name to query')
-  .action(async (name: string) => {
-    await listTables(name);
+  .description('List all tables in the current database')
+  .action(async () => {
+    await listTables();
   });
 
 program
   .command('describe')
   .description('Show the structure of a table')
-  .argument('<db-name>', 'Connection name to query')
-  .argument('<table>', 'Table name to describe')
-  .action(async (name: string, table: string) => {
-    await describeTable(name, table);
+  .argument('<table>', 'Table name to describe in current connection')
+  .action(async (table: string) => {
+    await describeTable(undefined, table);
   });
 
 program
   .command('schema')
   .description('Show a table schema in a compact DDL-style format')
-  .argument('<db-name>', 'Connection name to query')
-  .argument('<table>', 'Table name to inspect')
-  .action(async (name: string, table: string) => {
-    await showTableSchema(name, table);
+  .argument('<table>', 'Table name to inspect in current connection')
+  .action(async (table: string) => {
+    await showTableSchema(undefined, table);
   });
 
 program
   .command('related')
   .description('Show tables related to the specified table and the linking fields')
-  .argument('<db-name>', 'Connection name to query')
-  .argument('<table>', 'Table name to inspect relationships for')
-  .action(async (name: string, table: string) => {
-    await showRelatedTables(name, table);
+  .argument('<table>', 'Table name to inspect relationships for in current connection')
+  .action(async (table: string) => {
+    await showRelatedTables(undefined, table);
   });
 
 program
   .command('query')
   .description('Execute a SQL query')
-  .argument('<db-name>', 'Connection name to query')
-  .argument('<sql>', 'SQL query to execute (use quotes for complex queries)')
-  .action(async (name: string, sql: string) => {
-    await executeQuery(name, sql);
+  .argument('<sql>', 'SQL query to execute on current connection (use quotes for complex queries)')
+  .action(async (sql: string) => {
+    await executeQuery(undefined, sql);
   });
 
 program
