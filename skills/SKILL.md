@@ -16,8 +16,8 @@ Use this skill to work with PostgreSQL via `dbcli` commands.
 ## Constraints
 
 - Database support is PostgreSQL only.
-- `connect` requires a full URL with username and password.
-- Commands use `<db-name>` as the saved connection key (database name parsed from URL path).
+- Saved connections are keyed by database name parsed from URL path.
+- Most commands run against the current connection and do not take `<db-name>`.
 
 ## Command Guide
 
@@ -26,30 +26,31 @@ Use this skill to work with PostgreSQL via `dbcli` commands.
 - Use when: before any task, to confirm the connection exists.
 - Output: JSON summary with `name`, `host`, `port`, and `last_connected`.
 
-### 2) `dbcli connect "<postgresql-url>"`
-- Purpose: create or update a saved connection by database name.
+### 2) `dbcli connect "<postgresql-url>"` or `dbcli connect <db-name>`
+- Purpose: create/update a connection by URL, or switch current connection by name.
 - Required format:
   `postgresql://user:password@host:5432/database`
 - Notes:
   - Username and password must be present in URL.
   - Saved file is `~/.dbcli/connections.json`.
+  - Running `dbcli connect lulab` switches current connection to `lulab` if it already exists.
 
-### 3) `dbcli tables <db-name>`
-- Purpose: list all tables in the target database.
+### 3) `dbcli tables`
+- Purpose: list all tables in the current database.
 - Use when: first schema discovery step.
 - Output: JSON with `table_count` and table list (`schema`, `name`).
 
-### 4) `dbcli schema <db-name> <table>`
+### 4) `dbcli schema <table>`
 - Purpose: show compact DDL-like structure for one table.
 - Use when: quick understanding for SQL writing.
 - Output: `CREATE TABLE` style text with column types, nullability, defaults, and inline `REFERENCES` when foreign keys exist.
 
-### 5) `dbcli describe <db-name> <table>`
+### 5) `dbcli describe <table>`
 - Purpose: show detailed column metadata in JSON.
 - Use when: you need machine-friendly fields or precise column attributes.
 - Output fields per column: `name`, `type`, `nullable`, `default`, `description`.
 
-### 6) `dbcli related <db-name> <table>`
+### 6) `dbcli related <table>`
 - Purpose: find directly related tables for one table.
 - Use when: preparing joins or understanding dependencies.
 - Output:
@@ -57,7 +58,7 @@ Use this skill to work with PostgreSQL via `dbcli` commands.
   - `incoming_related_tables`: these tables reference current table.
   - counts for each direction.
 
-### 7) `dbcli query <db-name> "<sql>"`
+### 7) `dbcli query "<sql>"`
 - Purpose: execute SQL directly.
 - Use when: after schema/relationship checks, run read or write SQL.
 - Output:
@@ -67,10 +68,10 @@ Use this skill to work with PostgreSQL via `dbcli` commands.
 ## Recommended Execution Order
 
 1. `dbcli --status`
-2. `dbcli tables <db-name>`
-3. `dbcli schema <db-name> <table>` and/or `dbcli describe <db-name> <table>`
-4. `dbcli related <db-name> <table>` if multi-table logic is needed
-5. `dbcli query <db-name> "<sql>"`
+2. `dbcli tables`
+3. `dbcli schema <table>` and/or `dbcli describe <table>`
+4. `dbcli related <table>` if multi-table logic is needed
+5. `dbcli query "<sql>"`
 
 ## Example A: Understand an Unknown Table
 
@@ -78,10 +79,11 @@ Goal: learn `users` table before writing SQL.
 
 ```bash
 dbcli --status
-dbcli tables mydb
-dbcli schema mydb users
-dbcli describe mydb users
-dbcli related mydb users
+dbcli connect lulab
+dbcli tables
+dbcli schema users
+dbcli describe users
+dbcli related users
 ```
 
 Expected result:
@@ -94,8 +96,8 @@ Expected result:
 Goal: query user preferences with user identity.
 
 ```bash
-dbcli related mydb user_preferences
-dbcli query mydb "SELECT up.*, u.email FROM user_preferences up JOIN users u ON up.user_id = u.id LIMIT 20"
+dbcli related user_preferences
+dbcli query "SELECT up.*, u.email FROM user_preferences up JOIN users u ON up.user_id = u.id LIMIT 20"
 ```
 
 Expected result:
@@ -105,8 +107,8 @@ Expected result:
 ## Common Recovery
 
 - `Connection "<db-name>" not found`:
-  run `dbcli --status`; if missing, run `dbcli connect ...`.
+  run `dbcli --status`; if exists, run `dbcli connect <db-name>` to switch.
 - `missing username or password in URL`:
   fix URL format and reconnect.
 - `Table "<table>" not found`:
-  run `dbcli tables <db-name>` and use exact table name.
+  run `dbcli tables` and use exact table name.
