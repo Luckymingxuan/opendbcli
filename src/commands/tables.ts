@@ -1,9 +1,13 @@
 import chalk from 'chalk';
 import { PostgresDriver } from '../drivers/postgres.js';
-import { getConnectionByName } from './connect.js';
+import { getConnectionByName, getCurrentConnectionName } from './connect.js';
 
-async function getDriverForConnection(connName: string): Promise<{ driver: PostgresDriver; connName: string } | null> {
-  const connection = await getConnectionByName(connName);
+async function getDriverForConnection(connName?: string): Promise<{ driver: PostgresDriver; connName: string } | null> {
+  const resolvedName = connName ?? await getCurrentConnectionName() ?? undefined;
+  if (!resolvedName) {
+    return null;
+  }
+  const connection = await getConnectionByName(resolvedName);
   if (!connection) {
     return null;
   }
@@ -15,10 +19,10 @@ async function getDriverForConnection(connName: string): Promise<{ driver: Postg
   const driver = new PostgresDriver();
   await driver.connect(url.toString());
 
-  return { driver, connName };
+  return { driver, connName: resolvedName };
 }
 
-export async function listTables(connName: string): Promise<void> {
+export async function listTables(connName?: string): Promise<void> {
   const result = await getDriverForConnection(connName);
 
   if (!result) {
@@ -53,7 +57,7 @@ export async function listTables(connName: string): Promise<void> {
   }
 }
 
-export async function describeTable(connName: string, tableName: string): Promise<void> {
+export async function describeTable(connName: string | undefined, tableName: string): Promise<void> {
   const result = await getDriverForConnection(connName);
 
   if (!result) {
@@ -92,7 +96,7 @@ export async function describeTable(connName: string, tableName: string): Promis
   }
 }
 
-export async function showTableSchema(connName: string, tableName: string): Promise<void> {
+export async function showTableSchema(connName: string | undefined, tableName: string): Promise<void> {
   const result = await getDriverForConnection(connName);
 
   if (!result) {
@@ -144,7 +148,7 @@ export async function showTableSchema(connName: string, tableName: string): Prom
   }
 }
 
-export async function showRelatedTables(connName: string, tableName: string): Promise<void> {
+export async function showRelatedTables(connName: string | undefined, tableName: string): Promise<void> {
   const result = await getDriverForConnection(connName);
 
   if (!result) {
