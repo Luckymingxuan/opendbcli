@@ -32,7 +32,7 @@ npm install -g @luckymingxuan/dbcli
 To make agent workflows more reliable, export the built-in skill file:
 
 ```bash
-dbcli skill --output ./skill.md
+dbcli skill --output ./exports
 ```
 
 Then place it in your agent skill directory, for example:
@@ -58,7 +58,7 @@ dbcli describe mydb users
 dbcli schema mydb users
 dbcli related mydb users
 dbcli query mydb "SELECT * FROM users"
-dbcli skill --output ./skill.md
+dbcli skill --output ./exports
 dbcli disconnect mydb
 ```
 
@@ -72,7 +72,7 @@ dbcli describe <db-name> <table>      # Detailed JSON table description
 dbcli schema <db-name> <table>        # Compact DDL-style schema output
 dbcli related <db-name> <table>       # Related tables split by outgoing/incoming direction
 dbcli query <db-name> "<sql>"         # Execute SQL on the selected connection
-dbcli skill --output <path>           # Write built-in skill markdown to a file
+dbcli skill --output <path>           # Export full skills bundle to <path>/dbcli-skills
 dbcli disconnect <db-name>            # Remove a saved connection
 ```
 
@@ -82,8 +82,8 @@ dbcli disconnect <db-name>            # Remove a saved connection
 # Print skill markdown to stdout
 dbcli skill
 
-# Write skill markdown to a file
-dbcli skill --output ./skill.md
+# Export full skills bundle to ./exports/dbcli-skills
+dbcli skill --output ./exports
 ```
 
 ### Example AI-driven Workflow
