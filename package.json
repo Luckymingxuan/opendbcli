@@ -1,12 +1,32 @@
 {
   "name": "@luckymingxuan/dbcli",
   "version": "0.1.9",
-  "description": "Database CLI tool",
+  "description": "A database CLI that truly opens your database to agents",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
     "dbcli": "dist/index.js"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Luckymingxuan/dbcli.git"
+  },
+  "homepage": "https://github.com/Luckymingxuan/dbcli#readme",
+  "bugs": {
+    "url": "https://github.com/Luckymingxuan/dbcli/issues"
+  },
+  "license": "MIT",
+  "keywords": [
+    "database",
+    "cli",
+    "postgresql",
+    "sql",
+    "agent",
+    "ai-agent",
+    "schema",
+    "query",
+    "developer-tools"
+  ],
   "files": [
     "dist",
     "skills",
