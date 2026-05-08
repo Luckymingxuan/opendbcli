@@ -83,8 +83,8 @@ program
 
 program
   .command('skill')
-  .description('Print skill markdown or write it to a file')
-  .option('--output <path>', 'Write skill markdown to a file')
+  .description('Print SKILL.md or export the full skills bundle')
+  .option('--output <path>', 'Export skills folder to <path>/dbcli-skills')
   .action(async (options: { output?: string }) => {
     await skill(options);
   });
