@@ -1,0 +1,18 @@
+name: dbcli
+description: PostgreSQL inspection and query skill for agent workflows using dbcli.
+version: 1
+triggers:
+  - dbcli
+  - postgresql
+  - schema
+  - table relationship
+  - sql query
+entrypoint: ../SKILL.md
+capabilities:
+  - inspect tables
+  - inspect schema
+  - inspect related tables
+  - run sql
+constraints:
+  - PostgreSQL only
+  - requires saved/current connection
