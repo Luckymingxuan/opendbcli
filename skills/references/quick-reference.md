@@ -28,6 +28,9 @@
 - `dbcli query "<sql>"`
   Executes SQL against current connection.
 
+- `dbcli skill --output <path>`
+  Exports the full skills bundle to `<path>/dbcli-skills`.
+
 ## Suggested Flow
 
 1. `dbcli --status`
@@ -35,6 +38,7 @@
 3. `dbcli tables`
 4. `dbcli schema <table>` + `dbcli related <table>`
 5. `dbcli query "<sql>"`
+6. `dbcli skill --output <path>` when the full skill bundle needs to be shared or installed elsewhere
 
 ## Common Errors
 
