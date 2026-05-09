@@ -31,6 +31,9 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
    - `dbcli describe <table>`
    - `dbcli related <table>`
 4. Execute SQL: `dbcli query "<sql>"`
+5. Export the full skill bundle when needed:
+   - `dbcli skill --output <path>`
+   - exported folder: `<path>/dbcli-skills`
 
 ## Rules
 
