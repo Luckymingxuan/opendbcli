@@ -57,7 +57,7 @@ export async function listTables(connName?: string): Promise<void> {
   }
 }
 
-export async function describeTable(connName: string | undefined, tableName: string): Promise<void> {
+export async function listTableColumns(connName: string | undefined, tableName: string): Promise<void> {
   const result = await getDriverForConnection(connName);
 
   if (!result) {
@@ -83,17 +83,20 @@ export async function describeTable(connName: string | undefined, tableName: str
           type: col.dataType,
           nullable: col.isNullable,
           default: col.defaultValue,
-          description: col.description,
         })),
       };
 
-      console.log(chalk.cyan('Table Description'));
-      console.log(chalk.gray('================='));
+      console.log(chalk.cyan('Table Columns'));
+      console.log(chalk.gray('============='));
       console.log(JSON.stringify(payload, null, 2));
     }
   } finally {
     await driver.disconnect();
   }
+}
+
+export async function describeTable(connName: string | undefined, tableName: string): Promise<void> {
+  await listTableColumns(connName, tableName);
 }
 
 export async function showTableSchema(connName: string | undefined, tableName: string): Promise<void> {

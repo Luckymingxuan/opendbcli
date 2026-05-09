@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { connect, disconnect, showConnections as statusConnections } from './commands/connect.js';
-import { listTables, describeTable, showRelatedTables, showTableSchema } from './commands/tables.js';
+import { listTables, listTableColumns, describeTable, showRelatedTables, showTableSchema } from './commands/tables.js';
 import { executeQuery } from './commands/query.js';
 import { skill } from './commands/skill.js';
 
@@ -43,9 +43,15 @@ program
   });
 
 program
-  .command('tables')
-  .description('List all tables in the current database')
-  .action(async () => {
+  .command('list')
+  .description('List all tables or show a table column structure in JSON')
+  .argument('[table]', 'Optional table name to inspect in current connection')
+  .action(async (table?: string) => {
+    if (table) {
+      await listTableColumns(undefined, table);
+      return;
+    }
+
     await listTables();
   });
 

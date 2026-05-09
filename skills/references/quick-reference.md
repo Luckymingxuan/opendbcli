@@ -11,14 +11,14 @@
 - `dbcli connect <db-name>`
   Switches current connection to an existing saved connection.
 
-- `dbcli tables`
+- `dbcli list`
   Lists tables in current connection.
+
+- `dbcli list <table>`
+  Shows table columns as JSON metadata without descriptions.
 
 - `dbcli schema <table>`
   Shows compact DDL-like structure for one table.
-
-- `dbcli describe <table>`
-  Shows detailed table columns as JSON metadata.
 
 - `dbcli related <table>`
   Shows related table names split by direction:
@@ -35,7 +35,7 @@
 
 1. `dbcli --status`
 2. `dbcli connect <db-name>` or `dbcli connect "<url>"`
-3. `dbcli tables`
+3. `dbcli list`
 4. `dbcli schema <table>` + `dbcli related <table>`
 5. `dbcli query "<sql>"`
 6. `dbcli skill --output <path>` when the full skill bundle needs to be shared or installed elsewhere
@@ -49,4 +49,4 @@
   Use format `postgresql://user:password@host:5432/database`.
 
 - Table not found:
-  Run `dbcli tables` and use exact name.
+  Run `dbcli list` and use exact name.
