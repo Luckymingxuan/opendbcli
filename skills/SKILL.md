@@ -26,9 +26,9 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
    - Create/update: `dbcli connect "postgresql://user:password@host:5432/database"`
    - Switch existing: `dbcli connect <db-name>`
 3. Discover schema context:
-   - `dbcli tables`
+   - `dbcli list`
+   - `dbcli list <table>`
    - `dbcli schema <table>`
-   - `dbcli describe <table>`
    - `dbcli related <table>`
 4. Execute SQL: `dbcli query "<sql>"`
 5. Export the full skill bundle when needed:
@@ -37,9 +37,9 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
 
 ## Rules
 
-- Unknown table first: `dbcli tables`
+- Unknown table first: `dbcli list`
 - Join query first: `dbcli related <table>`
-- Column-level checks: `dbcli describe <table>`
+- Column-level checks: `dbcli list <table>`
 
 ## Reference
 

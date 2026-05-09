@@ -53,13 +53,13 @@ The CLI is designed for agent-readable database access.
 ```bash
 dbcli connect "postgresql://postgres:password@localhost:5432/mydb"
 dbcli --status
-dbcli tables mydb
-dbcli describe mydb users
-dbcli schema mydb users
-dbcli related mydb users
-dbcli query mydb "SELECT * FROM users"
+dbcli list
+dbcli list users
+dbcli schema users
+dbcli related users
+dbcli query "SELECT * FROM users"
 dbcli skill --output ./exports
-dbcli disconnect mydb
+dbcli disconnect
 ```
 
 ### Command Reference
@@ -67,13 +67,13 @@ dbcli disconnect mydb
 ```bash
 dbcli connect "<postgresql-url>"      # Save and verify a database connection
 dbcli --status                        # Show all saved connections
-dbcli tables <db-name>                # List all tables in the database
-dbcli describe <db-name> <table>      # Detailed JSON table description
-dbcli schema <db-name> <table>        # Compact DDL-style schema output
-dbcli related <db-name> <table>       # Related tables split by outgoing/incoming direction
-dbcli query <db-name> "<sql>"         # Execute SQL on the selected connection
+dbcli list                            # List all tables in the current database
+dbcli list <table>                    # Show table columns in JSON without descriptions
+dbcli schema <table>                  # Compact DDL-style schema output
+dbcli related <table>                 # Related tables split by outgoing/incoming direction
+dbcli query "<sql>"                   # Execute SQL on the current connection
 dbcli skill --output <path>           # Export full skills bundle to <path>/dbcli-skills
-dbcli disconnect <db-name>            # Remove a saved connection
+dbcli disconnect [db-name]            # Remove a saved connection
 ```
 
 ### Skill Export
@@ -90,12 +90,12 @@ dbcli skill --output ./exports
 
 ```bash
 dbcli connect "postgresql://postgres:password@localhost:5432/notesdb"
-dbcli tables notesdb
-dbcli schema notesdb notes
-dbcli related notesdb notes
-dbcli query notesdb "CREATE TABLE notes (id SERIAL PRIMARY KEY, content TEXT)"
-dbcli query notesdb "INSERT INTO notes (content) VALUES ('hello world')"
-dbcli query notesdb "SELECT * FROM notes"
+dbcli list
+dbcli schema notes
+dbcli related notes
+dbcli query "CREATE TABLE notes (id SERIAL PRIMARY KEY, content TEXT)"
+dbcli query "INSERT INTO notes (content) VALUES ('hello world')"
+dbcli query "SELECT * FROM notes"
 ```
 
 ---
