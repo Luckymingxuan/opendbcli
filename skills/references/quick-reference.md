@@ -18,7 +18,7 @@
   Shows table columns as JSON metadata without descriptions.
 
 - `dbcli pull`
-  Syncs table names into the local description file for the current connection.
+  Syncs table names into the local description file for the current connection and archives removed table descriptions under `removed_tables`.
 
 - `dbcli describe`
   Shows the full local description file, including the database description and all table descriptions.
