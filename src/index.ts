@@ -1,7 +1,8 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import { connect, disconnect, showConnections as statusConnections } from './commands/connect.js';
-import { listTables, listTableColumns, describeTable, showRelatedTables, showTableSchema } from './commands/tables.js';
+import { pullDescriptions, describe } from './commands/describe.js';
+import { listTables, listTableColumns, showRelatedTables, showTableSchema } from './commands/tables.js';
 import { executeQuery } from './commands/query.js';
 import { skill } from './commands/skill.js';
 
@@ -57,10 +58,20 @@ program
 
 program
   .command('describe')
-  .description('Show the structure of a table')
-  .argument('<table>', 'Table name to describe in current connection')
-  .action(async (table: string) => {
-    await describeTable(undefined, table);
+  .description('Read or update database and table descriptions')
+  .argument('[table]', 'Optional table name to describe')
+  .option('--tables', 'Show all table descriptions')
+  .option('--database', 'Show or update the database description')
+  .option('--set <text>', 'Set the description text for the selected target')
+  .action(async (table: string | undefined, options: { tables?: boolean; database?: boolean; set?: string }) => {
+    await describe(table, options);
+  });
+
+program
+  .command('pull')
+  .description('Sync table names into the local description file')
+  .action(async () => {
+    await pullDescriptions();
   });
 
 program

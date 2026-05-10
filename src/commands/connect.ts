@@ -19,7 +19,7 @@ interface ConnectionStore {
   connections: Record<string, ConnectionInfo>;
 }
 
-const CONFIG_DIR = path.join(os.homedir(), '.dbcli');
+export const CONFIG_DIR = path.join(os.homedir(), '.dbcli');
 const CONFIG_FILE = path.join(CONFIG_DIR, 'connections.json');
 
 let connections: Map<string, ConnectionInfo> = new Map();
