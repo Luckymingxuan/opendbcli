@@ -1,8 +1,25 @@
-# dbcli
+<div align="center">
+
+```text
+██████╗ ██████╗  ██████╗██╗     ██╗
+██╔══██╗██╔══██╗██╔════╝██║     ██║
+██║  ██║██████╔╝██║     ██║     ██║
+██║  ██║██╔══██╗██║     ██║     ██║
+██████╔╝██████╔╝╚██████╗███████╗██║
+╚═════╝ ╚═════╝  ╚═════╝╚══════╝╚═╝
+```
+
+</div>
+
+
+
+<div align="center">
 
 A database CLI that truly opens your database to agents.
 
 Give an agent a real database connection, and it can inspect schema, understand tables, and query the data layer directly.
+
+</div>
 
 ## Why dbcli?
 
