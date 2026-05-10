@@ -41,6 +41,32 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
    - `dbcli skill --output <path>`
    - exported folder: `<path>/dbcli-skills`
 
+## Manual Command
+
+### `/dbcli-describe`
+
+Use this when the user wants the agent to draft business-oriented database and table descriptions, then optionally write them back into dbcli.
+
+Steps:
+
+1. Run `dbcli list` to get the active tables.
+2. For each table, inspect `dbcli list <table>`.
+3. Use `dbcli related <table>` only when relationships help clarify the table's business role.
+4. Draft short descriptions:
+   - `database`: 1-3 sentences describing the database at a high level
+   - `tables`: one short sentence per table
+5. Return the draft as JSON compatible with `dbcli import`.
+6. Ask for confirmation before importing anything.
+7. Only after the user confirms, run `dbcli import '<json>'` or `dbcli import --file <path>`.
+
+Rules:
+
+- Keep descriptions short and business-oriented.
+- Do not turn table descriptions into long field-by-field explanations.
+- Prefer high-confidence summaries based on table names, key columns, and obvious relationships.
+- If meaning is unclear, use cautious wording instead of guessing.
+- Do not import automatically without an explicit user confirmation.
+
 ## Rules
 
 - Unknown table first: `dbcli list`
