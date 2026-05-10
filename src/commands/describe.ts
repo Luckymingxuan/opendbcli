@@ -8,6 +8,7 @@ interface DescribeFile {
   version: 1;
   database: string;
   tables: Record<string, string>;
+  removed_tables: Record<string, string>;
 }
 
 interface DescribeOptions {
@@ -52,7 +53,18 @@ function createEmptyDescribeFile(): DescribeFile {
     version: 1,
     database: '',
     tables: {},
+    removed_tables: {},
   };
+}
+
+function normalizeStringMap(value: unknown): Record<string, string> {
+  if (!value || typeof value !== 'object') {
+    return {};
+  }
+
+  return Object.fromEntries(
+    Object.entries(value).map(([key, entryValue]) => [key, typeof entryValue === 'string' ? entryValue : '']),
+  );
 }
 
 async function ensureDescriptionsDir(): Promise<void> {
@@ -68,9 +80,8 @@ async function readDescribeFile(connectionName: string): Promise<DescribeFile | 
     return {
       version: 1,
       database: typeof parsed.database === 'string' ? parsed.database : '',
-      tables: parsed.tables && typeof parsed.tables === 'object' ? Object.fromEntries(
-        Object.entries(parsed.tables).map(([key, value]) => [key, typeof value === 'string' ? value : '']),
-      ) : {},
+      tables: normalizeStringMap(parsed.tables),
+      removed_tables: normalizeStringMap((parsed as { removed_tables?: unknown }).removed_tables),
     };
   } catch {
     return null;
@@ -115,21 +126,43 @@ export async function pullDescriptions(): Promise<void> {
 
     const describeFile = await readDescribeFile(connName) ?? createEmptyDescribeFile();
     const previousTableNames = Object.keys(describeFile.tables).sort((a, b) => a.localeCompare(b));
+    const previousRemovedTableNames = Object.keys(describeFile.removed_tables).sort((a, b) => a.localeCompare(b));
     const currentTableSet = new Set(currentTableNames);
 
     const nextTables: Record<string, string> = {};
+    const nextRemovedTables = { ...describeFile.removed_tables };
+    const restoredTables: string[] = [];
+
     for (const tableName of currentTableNames) {
-      nextTables[tableName] = describeFile.tables[tableName] ?? '';
+      if (tableName in describeFile.tables) {
+        nextTables[tableName] = describeFile.tables[tableName];
+        continue;
+      }
+
+      if (tableName in describeFile.removed_tables) {
+        nextTables[tableName] = describeFile.removed_tables[tableName];
+        delete nextRemovedTables[tableName];
+        restoredTables.push(tableName);
+        continue;
+      }
+
+      nextTables[tableName] = '';
     }
 
     const removedTables = previousTableNames.filter((tableName) => !currentTableSet.has(tableName));
-    const addedTables = currentTableNames.filter((tableName) => !(tableName in describeFile.tables));
+    for (const tableName of removedTables) {
+      nextRemovedTables[tableName] = describeFile.tables[tableName] ?? '';
+    }
+
+    const restoredTableSet = new Set(restoredTables);
+    const addedTables = currentTableNames.filter((tableName) => !(tableName in describeFile.tables) && !restoredTableSet.has(tableName));
     const unchangedTables = currentTableNames.filter((tableName) => tableName in describeFile.tables);
 
     const nextDescribeFile: DescribeFile = {
       version: 1,
       database: describeFile.database,
       tables: nextTables,
+      removed_tables: nextRemovedTables,
     };
 
     await writeDescribeFile(connName, nextDescribeFile);
@@ -139,8 +172,14 @@ export async function pullDescriptions(): Promise<void> {
       description_file: getDescribeFilePath(connName),
       added_tables: addedTables,
       removed_tables: removedTables,
+      restored_tables: restoredTables.sort((a, b) => a.localeCompare(b)),
       unchanged_tables: unchangedTables,
-      updated: addedTables.length > 0 || removedTables.length > 0 || previousTableNames.length === 0,
+      archived_removed_tables: Object.keys(nextRemovedTables).sort((a, b) => a.localeCompare(b)),
+      updated: addedTables.length > 0
+        || removedTables.length > 0
+        || restoredTables.length > 0
+        || previousTableNames.length === 0
+        || previousRemovedTableNames.length !== Object.keys(nextRemovedTables).length,
     };
 
     console.log(chalk.cyan('Description Sync'));

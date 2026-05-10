@@ -74,7 +74,7 @@ dbcli connect "<postgresql-url>"      # Save and verify a database connection
 dbcli --status                        # Show all saved connections
 dbcli list                            # List all tables in the current database
 dbcli list <table>                    # Show table columns in JSON without descriptions
-dbcli pull                            # Sync table names into ~/.dbcli/descriptions/<db>.json
+dbcli pull                            # Sync table names into ~/.dbcli/descriptions/<db>.json and archive removed table descriptions
 dbcli describe                        # Show the full local description file
 dbcli describe <table>                # Show a single table description
 dbcli describe --tables               # Show all table descriptions
@@ -128,6 +128,8 @@ Descriptions are stored in:
 ```bash
 ~/.dbcli/descriptions/<connection-name>.json
 ```
+
+When a table is removed from the database, `dbcli pull` archives its description under `removed_tables` instead of deleting it permanently.
 
 Example configuration:
 
