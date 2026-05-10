@@ -59,7 +59,6 @@ dbcli pull
 dbcli describe
 dbcli describe users
 dbcli describe --database
-dbcli describe users --set "User accounts and profile records"
 dbcli schema users
 dbcli related users
 dbcli query "SELECT * FROM users"
@@ -79,8 +78,6 @@ dbcli describe                        # Show the full local description file
 dbcli describe <table>                # Show a single table description
 dbcli describe --tables               # Show all table descriptions
 dbcli describe --database             # Show the database description
-dbcli describe <table> --set "<text>" # Set a table description
-dbcli describe --database --set "<text>" # Set the database description
 dbcli schema <table>                  # Compact DDL-style schema output
 dbcli related <table>                 # Related tables split by outgoing/incoming direction
 dbcli query "<sql>"                   # Execute SQL on the current connection
@@ -104,8 +101,6 @@ dbcli skill --output ./exports
 dbcli connect "postgresql://postgres:password@localhost:5432/notesdb"
 dbcli list
 dbcli pull
-dbcli describe --database --set "Core notes application data"
-dbcli describe notes --set "User-created notes with text content and timestamps"
 dbcli schema notes
 dbcli related notes
 dbcli query "CREATE TABLE notes (id SERIAL PRIMARY KEY, content TEXT)"
