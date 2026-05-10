@@ -58,12 +58,11 @@ program
 
 program
   .command('describe')
-  .description('Read or update database and table descriptions')
+  .description('Read database and table descriptions')
   .argument('[table]', 'Optional table name to describe')
   .option('--tables', 'Show all table descriptions')
-  .option('--database', 'Show or update the database description')
-  .option('--set <text>', 'Set the description text for the selected target')
-  .action(async (table: string | undefined, options: { tables?: boolean; database?: boolean; set?: string }) => {
+  .option('--database', 'Show the database description')
+  .action(async (table: string | undefined, options: { tables?: boolean; database?: boolean }) => {
     await describe(table, options);
   });
 

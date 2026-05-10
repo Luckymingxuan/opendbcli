@@ -14,7 +14,6 @@ interface DescribeFile {
 interface DescribeOptions {
   database?: boolean;
   tables?: boolean;
-  set?: string;
 }
 
 const DESCRIPTIONS_DIR = path.join(CONFIG_DIR, 'descriptions');
@@ -206,54 +205,6 @@ export async function describe(tableName: string | undefined, options: DescribeO
   }
 
   const describeFile = await readDescribeFileOrExit(connectionName);
-
-  if (options.set !== undefined) {
-    if (options.tables) {
-      console.log(chalk.red('Cannot use --set with --tables.'));
-      process.exit(1);
-    }
-
-    if (options.database) {
-      const nextPayload: DescribeFile = {
-        ...describeFile,
-        database: options.set,
-      };
-      await writeDescribeFile(connectionName, nextPayload);
-      console.log(JSON.stringify({
-        updated: true,
-        target: 'database',
-        database: nextPayload.database,
-      }, null, 2));
-      return;
-    }
-
-    if (!tableName) {
-      console.log(chalk.red('Use "dbcli describe <table> --set <text>" or "dbcli describe --database --set <text>".'));
-      process.exit(1);
-    }
-
-    if (!(tableName in describeFile.tables)) {
-      console.log(chalk.red(`Table "${tableName}" not found in description file for database "${connectionName}".`));
-      console.log(chalk.cyan('Run "dbcli pull" first to sync current table names.'));
-      process.exit(1);
-    }
-
-    const nextPayload: DescribeFile = {
-      ...describeFile,
-      tables: {
-        ...describeFile.tables,
-        [tableName]: options.set,
-      },
-    };
-    await writeDescribeFile(connectionName, nextPayload);
-    console.log(JSON.stringify({
-      updated: true,
-      target: 'table',
-      table: tableName,
-      description: nextPayload.tables[tableName],
-    }, null, 2));
-    return;
-  }
 
   if (options.database) {
     console.log(JSON.stringify({

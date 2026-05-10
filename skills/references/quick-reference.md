@@ -32,12 +32,6 @@
 - `dbcli describe --database`
   Shows the database description as JSON.
 
-- `dbcli describe <table> --set "<text>"`
-  Sets one table description in the local description file.
-
-- `dbcli describe --database --set "<text>"`
-  Sets the database description in the local description file.
-
 - `dbcli schema <table>`
   Shows compact DDL-like structure for one table.
 
@@ -58,7 +52,7 @@
 2. `dbcli connect <db-name>` or `dbcli connect "<url>"`
 3. `dbcli list`
 4. `dbcli pull`
-5. `dbcli describe --database --set "<text>"` or `dbcli describe <table> --set "<text>"`
+5. `dbcli describe` or `dbcli describe <table>`
 6. `dbcli schema <table>` + `dbcli related <table>`
 7. `dbcli query "<sql>"`
 8. `dbcli skill --output <path>` when the full skill bundle needs to be shared or installed elsewhere
