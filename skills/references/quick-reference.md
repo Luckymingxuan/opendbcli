@@ -32,6 +32,12 @@
 - `dbcli describe --database`
   Shows the database description as JSON.
 
+- `dbcli import --file <path>`
+  Imports descriptions from a JSON file. The file may contain only `database`, only `tables`, or both.
+
+- `dbcli import '<json>'`
+  Imports descriptions from a JSON string. The `tables` object may include one table, a few tables, or many tables.
+
 - `dbcli schema <table>`
   Shows compact DDL-like structure for one table.
 
@@ -52,10 +58,11 @@
 2. `dbcli connect <db-name>` or `dbcli connect "<url>"`
 3. `dbcli list`
 4. `dbcli pull`
-5. `dbcli describe` or `dbcli describe <table>`
-6. `dbcli schema <table>` + `dbcli related <table>`
-7. `dbcli query "<sql>"`
-8. `dbcli skill --output <path>` when the full skill bundle needs to be shared or installed elsewhere
+5. `dbcli import --file <path>` or `dbcli import '<json>'` when database or table descriptions need to be updated
+6. `dbcli describe` or `dbcli describe <table>`
+7. `dbcli schema <table>` + `dbcli related <table>`
+8. `dbcli query "<sql>"`
+9. `dbcli skill --output <path>` when the full skill bundle needs to be shared or installed elsewhere
 
 ## Common Errors
 
@@ -70,3 +77,6 @@
 
 - Description file not found:
   Run `dbcli pull` first.
+
+- Import payload rejected:
+  Use a JSON object with `database`, `tables`, or both, then make sure the tables already exist in the current synced description file.

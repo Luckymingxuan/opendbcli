@@ -59,6 +59,8 @@ dbcli pull
 dbcli describe
 dbcli describe users
 dbcli describe --database
+dbcli import --file ./descriptions.json
+dbcli import '{"tables":{"users":"User accounts and profile information."}}'
 dbcli schema users
 dbcli related users
 dbcli query "SELECT * FROM users"
@@ -78,6 +80,8 @@ dbcli describe                        # Show the full local description file
 dbcli describe <table>                # Show a single table description
 dbcli describe --tables               # Show all table descriptions
 dbcli describe --database             # Show the database description
+dbcli import --file <path>            # Import database and/or one, a few, or many table descriptions from a JSON file
+dbcli import '<json>'                 # Import database and/or table descriptions from a JSON string
 dbcli schema <table>                  # Compact DDL-style schema output
 dbcli related <table>                 # Related tables split by outgoing/incoming direction
 dbcli query "<sql>"                   # Execute SQL on the current connection
@@ -101,6 +105,7 @@ dbcli skill --output ./exports
 dbcli connect "postgresql://postgres:password@localhost:5432/notesdb"
 dbcli list
 dbcli pull
+dbcli import '{"database":"Core notes application data","tables":{"notes":"User-created notes with text content and timestamps"}}'
 dbcli schema notes
 dbcli related notes
 dbcli query "CREATE TABLE notes (id SERIAL PRIMARY KEY, content TEXT)"
@@ -125,6 +130,8 @@ Descriptions are stored in:
 ```
 
 When a table is removed from the database, `dbcli pull` archives its description under `removed_tables` instead of deleting it permanently.
+
+The import payload can include only `database`, only `tables`, or both. A `tables` object can contain one table, a few tables, or many tables. Any table not included in the payload keeps its existing description.
 
 Example configuration:
 
