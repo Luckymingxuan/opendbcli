@@ -11,34 +11,26 @@
 
 </div>
 
-
-
 <div align="center">
 
-A database CLI that truly opens your database to agents.
-
-Give an agent a real database connection, and it can inspect schema, understand tables, and query the data layer directly.
+**An agent-native database CLI.**
+Help agents understand real databases.
 
 </div>
 
 ## Why dbcli?
 
-Tools like `psql` are built for humans managing databases.\
-dbcli is built for agents that need to **understand and use a database as part of their workflow**.
+Traditional database tools are built for humans.
 
-- Agents can inspect tables and schema directly
-- Agents can query the database without human-oriented wrappers
-- Agents get closer to the real data layer instead of an abstracted API
+dbcli is built for AI agents that need to understand and work with real databases.
 
-The goal is simple: help agents understand the database, and make the database truly open to them.
+Instead of hiding the database behind APIs and abstractions, dbcli gives agents direct access to the data layer.
 
-## Database Support
-
-Currently supports **PostgreSQL only**.
-
-This is a deliberate choice: focus on one solid foundation for agent-native database workflows.
+The goal is simple: make databases understandable to agents.
 
 ## Quick Start
+
+Currently focused on PostgreSQL.
 
 ### Install
 
@@ -46,13 +38,15 @@ This is a deliberate choice: focus on one solid foundation for agent-native data
 npm install -g @luckymingxuan/dbcli
 ```
 
-To make agent workflows more reliable, export the built-in skill file:
+To help agents better understand and use your database, export the built-in skill bundle:
 
 ```bash
 dbcli skill --output ./exports
 ```
 
-Then place it in your agent skill directory, for example:
+You can install the exported skill manually, or ask your agent to place it into its own skill directory.
+
+Common skill locations:
 
 - Claude: `~/.claude/skills/dbcli/SKILL.md`
 - Gemini: `~/.gemini/skills/dbcli/SKILL.md`
@@ -60,73 +54,24 @@ Then place it in your agent skill directory, for example:
 
 ---
 
-### Commands
-
-The CLI is designed for agent-readable database access.
-
-<img width="679" height="339" alt="Image" src="https://github.com/user-attachments/assets/1ab2451f-f8f2-4558-85ce-d09726743a38" />
-
+## Example Agent Workflow
 
 ```bash
-dbcli connect "postgresql://postgres:password@localhost:5432/mydb"
-dbcli --status
-dbcli list
-dbcli list users
-dbcli pull
-dbcli describe
-dbcli describe users
-dbcli describe --database
-dbcli import --file ./descriptions.json
-dbcli import '{"tables":{"users":"User accounts and profile information."}}'
-dbcli schema users
-dbcli related users
-dbcli query "SELECT * FROM users"
-dbcli skill --output ./exports
-dbcli disconnect
-```
-
-### Command Reference
-
-```bash
-dbcli connect "<postgresql-url>"      # Save and verify a database connection
-dbcli --status                        # Show all saved connections
-dbcli list                            # List all tables in the current database
-dbcli list <table>                    # Show table columns in JSON without descriptions
-dbcli pull                            # Sync table names into ~/.dbcli/descriptions/<db>.json and archive removed table descriptions
-dbcli describe                        # Show the full local description file
-dbcli describe <table>                # Show a single table description
-dbcli describe --tables               # Show all table descriptions
-dbcli describe --database             # Show the database description
-dbcli import --file <path>            # Import database and/or one, a few, or many table descriptions from a JSON file
-dbcli import '<json>'                 # Import database and/or table descriptions from a JSON string
-dbcli schema <table>                  # Compact DDL-style schema output
-dbcli related <table>                 # Related tables split by outgoing/incoming direction
-dbcli query "<sql>"                   # Execute SQL on the current connection
-dbcli skill --output <path>           # Export full skills bundle to <path>/dbcli-skills
-dbcli disconnect [db-name]            # Remove a saved connection
-```
-
-### Skill Export
-
-```bash
-# Print skill markdown to stdout
-dbcli skill
-
-# Export full skills bundle to ./exports/dbcli-skills
-dbcli skill --output ./exports
-```
-
-### Example AI-driven Workflow
-
-```bash
+# Connect to the database
 dbcli connect "postgresql://postgres:password@localhost:5432/notesdb"
+
+# Inspect available tables
 dbcli list
+
+# Let the agent analyze the database and generate descriptions
 dbcli pull
 dbcli import '{"database":"Core notes application data","tables":{"notes":"User-created notes with text content and timestamps"}}'
+
+# Understand schema and relationships
 dbcli schema notes
 dbcli related notes
-dbcli query "CREATE TABLE notes (id SERIAL PRIMARY KEY, content TEXT)"
-dbcli query "INSERT INTO notes (content) VALUES ('hello world')"
+
+# Query the database directly
 dbcli query "SELECT * FROM notes"
 ```
 
@@ -146,24 +91,10 @@ Descriptions are stored in:
 ~/.dbcli/descriptions/<connection-name>.json
 ```
 
-When a table is removed from the database, `dbcli pull` archives its description under `removed_tables` instead of deleting it permanently.
-
-The import payload can include only `database`, only `tables`, or both. A `tables` object can contain one table, a few tables, or many tables. Any table not included in the payload keeps its existing description.
-
-Example configuration:
+Removed tables are archived automatically when running:
 
 ```bash
-{
-  "mydb": {
-    "url": "postgresql://localhost:5432/mydb",
-    "database": "mydb",
-    "host": "localhost",
-    "port": 5432,
-    "username": "postgres",
-    "password": "password",
-    "lastConnected": "2026-04-26T09:00:00.000Z"
-  }
-}
+dbcli pull
 ```
 
 ## License
