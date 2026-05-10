@@ -32,6 +32,8 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
    - `dbcli pull`
    - `dbcli describe`
    - `dbcli describe <table>`
+   - `dbcli import --file <path>`
+   - `dbcli import '<json>'`
    - `dbcli schema <table>`
    - `dbcli related <table>`
 4. Execute SQL: `dbcli query "<sql>"`
@@ -43,6 +45,7 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
 
 - Unknown table first: `dbcli list`
 - Description file sync first: `dbcli pull`
+- Batch description updates: `dbcli import --file <path>` or `dbcli import '<json>'`
 - Join query first: `dbcli related <table>`
 - Column-level checks: `dbcli list <table>`
 

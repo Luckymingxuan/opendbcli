@@ -2,6 +2,7 @@
 import { Command } from 'commander';
 import { connect, disconnect, showConnections as statusConnections } from './commands/connect.js';
 import { pullDescriptions, describe } from './commands/describe.js';
+import { importDescriptions } from './commands/import.js';
 import { listTables, listTableColumns, showRelatedTables, showTableSchema } from './commands/tables.js';
 import { executeQuery } from './commands/query.js';
 import { skill } from './commands/skill.js';
@@ -71,6 +72,15 @@ program
   .description('Sync table names into the local description file')
   .action(async () => {
     await pullDescriptions();
+  });
+
+program
+  .command('import')
+  .description('Import database and table descriptions from JSON')
+  .argument('[json]', 'Optional JSON string containing "database" and/or "tables"')
+  .option('--file <path>', 'Load the JSON payload from a file path')
+  .action(async (json: string | undefined, options: { file?: string }) => {
+    await importDescriptions(json, options);
   });
 
 program

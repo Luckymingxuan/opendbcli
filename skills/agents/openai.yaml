@@ -14,6 +14,8 @@ capabilities:
   - inspect tables
   - inspect database descriptions
   - inspect table descriptions
+  - import database descriptions
+  - import table descriptions
   - inspect schema
   - inspect related tables
   - run sql
