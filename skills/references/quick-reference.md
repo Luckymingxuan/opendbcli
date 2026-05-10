@@ -64,6 +64,11 @@
 8. `dbcli query "<sql>"`
 9. `dbcli skill --output <path>` when the full skill bundle needs to be shared or installed elsewhere
 
+## Manual Shortcut
+
+- `/dbcli-describe`
+  Scan the current database, draft a short business-oriented `database` description plus short per-table descriptions, return the draft as JSON for `dbcli import`, then ask the user for confirmation before importing.
+
 ## Common Errors
 
 - Connection not found:
