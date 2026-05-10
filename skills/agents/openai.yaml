@@ -5,11 +5,15 @@ triggers:
   - dbcli
   - postgresql
   - schema
+  - database description
+  - table description
   - table relationship
   - sql query
 entrypoint: ../SKILL.md
 capabilities:
   - inspect tables
+  - manage database descriptions
+  - manage table descriptions
   - inspect schema
   - inspect related tables
   - run sql
