@@ -10,6 +10,7 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
 ## Use This Skill When
 
 - The user asks to inspect database tables/columns.
+- The user wants database or table descriptions for agent context.
 - The user needs related tables before writing joins.
 - The user wants SQL execution through a saved database connection.
 
@@ -28,6 +29,9 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
 3. Discover schema context:
    - `dbcli list`
    - `dbcli list <table>`
+   - `dbcli pull`
+   - `dbcli describe`
+   - `dbcli describe <table>`
    - `dbcli schema <table>`
    - `dbcli related <table>`
 4. Execute SQL: `dbcli query "<sql>"`
@@ -38,6 +42,7 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
 ## Rules
 
 - Unknown table first: `dbcli list`
+- Description file sync first: `dbcli pull`
 - Join query first: `dbcli related <table>`
 - Column-level checks: `dbcli list <table>`
 
