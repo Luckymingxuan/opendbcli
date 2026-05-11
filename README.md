@@ -56,6 +56,8 @@ Common skill locations:
 
 ## Example Agent Workflow
 
+After installing the exported skill, ask your agent to run `/dbcli-describe` to draft descriptions, then confirm before importing them with `dbcli import`.
+
 ```bash
 # Connect to the database
 dbcli connect "postgresql://postgres:password@localhost:5432/notesdb"
@@ -63,6 +65,8 @@ dbcli connect "postgresql://postgres:password@localhost:5432/notesdb"
 # Inspect available tables
 dbcli list
 
+# Ask the agent to draft descriptions using the installed dbcli skill
+/dbcli-describe
 # Let the agent analyze the database and generate descriptions
 dbcli pull
 dbcli import '{"database":"Core notes application data","tables":{"notes":"User-created notes with text content and timestamps"}}'

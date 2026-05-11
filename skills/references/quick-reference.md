@@ -67,7 +67,7 @@
 ## Manual Shortcut
 
 - `/dbcli-describe`
-  Scan the current database, draft a short business-oriented `database` description plus short per-table descriptions, return the draft as JSON for `dbcli import`, then ask the user for confirmation before importing.
+  Scan the current database, draft a short business-oriented `database` description plus short per-table descriptions, return the draft as JSON for `dbcli import`, then ask the user for confirmation. After confirmation, run `dbcli pull` first and then import.
 
 ## Common Errors
 

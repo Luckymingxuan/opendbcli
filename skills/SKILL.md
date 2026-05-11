@@ -57,7 +57,8 @@ Steps:
    - `tables`: one short sentence per table
 5. Return the draft as JSON compatible with `dbcli import`.
 6. Ask for confirmation before importing anything.
-7. Only after the user confirms, run `dbcli import '<json>'` or `dbcli import --file <path>`.
+7. Only after the user confirms, run `dbcli pull`.
+8. Then run `dbcli import '<json>'` or `dbcli import --file <path>`.
 
 Rules:
 
