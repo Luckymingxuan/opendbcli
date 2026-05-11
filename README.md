@@ -1,21 +1,17 @@
 <div align="center">
-
-```text
+<pre>
 ██████╗ ██████╗  ██████╗██╗     ██╗
 ██╔══██╗██╔══██╗██╔════╝██║     ██║
 ██║  ██║██████╔╝██║     ██║     ██║
 ██║  ██║██╔══██╗██║     ██║     ██║
 ██████╔╝██████╔╝╚██████╗███████╗██║
 ╚═════╝ ╚═════╝  ╚═════╝╚══════╝╚═╝
-```
-
+</pre>
 </div>
 
 <div align="center">
-
-**An agent-native database CLI.**
+<strong>An agent-native database CLI.</strong><br/>
 Help agents understand real databases.
-
 </div>
 
 ## Why dbcli?
