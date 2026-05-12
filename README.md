@@ -10,7 +10,7 @@
 </div>
 
 <div align="center">
-<strong>An agent-native database CLI.</strong><br/>
+<strong>Database CLI for AI Agents.</strong><br/>
 Help agents understand real databases.
 </div>
 
