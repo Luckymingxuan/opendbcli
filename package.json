@@ -1,6 +1,6 @@
 {
   "name": "@luckymingxuan/dbcli",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Database CLI for AI agents to understand real databases.",
   "type": "module",
   "main": "dist/index.js",
