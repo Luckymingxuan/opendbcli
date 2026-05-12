@@ -1,7 +1,7 @@
 {
   "name": "@luckymingxuan/dbcli",
   "version": "0.2.2",
-  "description": "An agent-native database CLI.",
+  "description": "Database CLI for AI agents to understand real databases.",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
@@ -17,13 +17,12 @@
   },
   "license": "MIT",
   "keywords": [
-    "agent-native",
     "database",
     "cli",
+    "ai",
+    "agent",
     "postgresql",
-    "ai-agent",
     "schema",
-    "relationships",
     "descriptions",
     "sql"
   ],
