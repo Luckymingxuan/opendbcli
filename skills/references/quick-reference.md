@@ -1,3 +1,13 @@
+<!--
+ * @Author: Mingxuan songmingxuan936@gmail.com
+ * @Date: 2026-05-11 13:13:34
+ * @LastEditors: Mingxuan songmingxuan936@gmail.com
+ * @LastEditTime: 2026-05-12 20:29:33
+ * @FilePath: /dbcli/skills/references/quick-reference.md
+ * @Description: 
+ * 
+ * Copyright (c) 2026 by ${git_name_email}, All Rights Reserved. 
+-->
 # dbcli Skill Quick Reference
 
 ## Core Commands
@@ -45,6 +55,9 @@
   Shows related table names split by direction:
   - `outgoing_related_tables`
   - `incoming_related_tables`
+
+- `dbcli path <source> <target>`
+  Finds shortest relationship path between two tables, showing intermediate tables and join conditions.
 
 - `dbcli query "<sql>"`
   Executes SQL against current connection.

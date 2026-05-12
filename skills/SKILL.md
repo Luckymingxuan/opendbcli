@@ -36,6 +36,7 @@ Use this skill to inspect PostgreSQL schema, understand table relationships, and
    - `dbcli import '<json>'`
    - `dbcli schema <table>`
    - `dbcli related <table>`
+   - `dbcli path <source> <target>`
 4. Execute SQL: `dbcli query "<sql>"`
 5. Export the full skill bundle when needed:
    - `dbcli skill --output <path>`
